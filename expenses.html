@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahmed Faisal | Protocol Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Liquid Bubble & Zoom Effect */
+.nav-box {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    border: 2px solid #e0f2fe;
+    z-index: 1;
+}
+
+.nav-box::before {
+    content: "";
+    position: absolute;
+    top: 150%; /* শুরুতে নিচে থাকবে */
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: #22d3ee; /* Cyan Color */
+    border-radius: 40%;
+    transform: translateX(-50%);
+    transition: all 0.8s ease;
+    z-index: -1;
+}
+
+.nav-box:hover {
+    transform: scale(1.25) translateY(-5px); /* Zoom & Lift */
+    border-color: #22d3ee;
+    box-shadow: 0 15px 30px rgba(34, 211, 238, 0.3);
+}
+
+/* মাউস নিলে লিকুইড উপরে উঠে আসবে */
+.nav-box:hover::before {
+    top: -20%;
+    animation: liquid-wave 3s infinite linear;
+}
+
+.nav-box:hover .icon, .nav-box:hover .nav-text {
+    color: white !important; /* লিকুইডের ওপর টেক্সট সাদা দেখাবে */
+    transition: color 0.4s ease;
+}
+
+@keyframes liquid-wave {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* Sidebar background adjustment for White/Cyan Theme */
+.sidebar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+}
+        :root { --sky-white: #f0f9ff; --sky-blue: #0ea5e9; --orange: #f97316; --dark-bg: #0f172a; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: var(--sky-white); overflow-x: hidden; }
+        .dark-mode { background-color: var(--dark-bg); color: white; }
+        .hacker-font { font-family: 'Orbitron', sans-serif; }
+        
+        /* --- Tablet Style Sidebar --- */
+        .sidebar { 
+            width: 100px; height: 95vh; position: fixed; left: 15px; top: 2.5vh; 
+            background: rgba(14, 165, 233, 0.9); backdrop-filter: blur(15px);
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 30px 0; gap: 20px; z-index: 50; 
+            border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .nav-box {
+            width: 80px; height: 80px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Glow & Zoom Effect */
+        .nav-box:hover {
+            transform: scale(1.15); background: white; 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+        .nav-box:hover span { color: var(--sky-blue); }
+        .nav-box:hover .icon { transform: translateY(-3px); }
+
+        .icon { font-size: 24px; transition: 0.3s; }
+        .nav-text { font-size: 10px; font-weight: bold; margin-top: 5px; color: white; text-transform: uppercase; letter-spacing: 1px; }
+
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 30px; }
+        .round-box { border-radius: 25px; }
+
+        @media print { .sidebar, button, .no-print { display: none !important; } }
+    </style>
+</head>
+<body id="app-body">
+
+    <div id="page-1" class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <h1 id="greeting" class="hacker-font text-2xl text-sky-600 mb-8 h-10"></h1>
+        <div class="glass-card p-10 shadow-2xl max-w-2xl border-b-4 border-orange-500">
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="p-6 bg-white round-box shadow-inner"><img src="https://cdn-icons-png.flaticon.com/512/2091/2091584.png" class="w-16 mx-auto mb-2 animate-bounce"><span class="font-bold text-sky-600">VAULT</span></div>
+                <div class="p-6 bg-white round-box shadow-inner"><img src="https://cdn-icons-png.flaticon.com/512/4341/4341731.png" class="w-16 mx-auto mb-2"><span class="font-bold text-orange-500">PROTOCOL</span></div>
+            </div>
+            <button onclick="navToPage(2)" class="bg-sky-500 hover:bg-orange-500 text-white px-10 py-4 rounded-full font-bold text-xl flex items-center gap-3 mx-auto transition-all">GO TO VAULT ➔</button>
+        </div>
+        <p class="mt-10 text-gray-400 font-bold tracking-widest uppercase">Created by Ahmed Faisal</p>
+    </div>
+
+    <div id="page-2" class="hidden min-h-screen pl-32 pr-6 py-10">
+        <div class="sidebar shadow-2xl">
+            <div class="nav-box" onclick="showSection('bazar')">
+                <span class="icon">🛒</span>
+                <span class="nav-text">Bazar</span>
+            </div>
+            <div class="nav-box" onclick="showSection('locker')">
+                <span class="icon">🔒</span>
+                <span class="nav-text">Locker</span>
+            </div>
+            <div class="nav-box" onclick="showSection('reports')">
+                <span class="icon">📊</span>
+                <span class="nav-text">Report</span>
+            </div>
+            <div class="nav-box mt-auto bg-red-500/80" onclick="navToPage(1)">
+                <span class="icon">🚪</span>
+                <span class="nav-text">Exit</span>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-start mb-6 no-print">
+            <div><h2 class="text-3xl font-bold text-sky-600 hacker-font">PROTOCOL VAULT</h2><p id="live-time" class="text-orange-500 font-bold"></p></div>
+            <button onclick="toggleTheme()" class="bg-sky-100 p-4 rounded-full shadow-lg border-2 border-sky-400">🌓</button>
+        </div>
+
+        <div id="content-area">
+            <div id="bazar-section" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass-card p-8 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-sky-700">🛒 Expense Tracking</h3>
+                        <div class="flex gap-2">
+                            <input type="number" id="total-earn" placeholder="Monthly Salary" class="p-2 round-box border border-sky-300 w-32 outline-none text-black">
+                            <button onclick="updateEarn()" class="bg-orange-500 text-white px-4 py-2 round-box text-sm font-bold">SET EARN</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-y-auto max-h-[380px] mb-6">
+                        <table class="w-full text-left">
+                            <thead class="text-sky-600 border-b">
+                                <tr><th class="py-2">Item</th><th>Qty</th><th>Price</th><th>Total</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="item-list" class="text-gray-700"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="bg-sky-50 p-6 round-box grid grid-cols-1 md:grid-cols-4 gap-3 no-print">
+                        <select id="new-item-name" class="p-3 round-box border border-sky-200 outline-none text-black col-span-1 md:col-span-1">
+    <option disabled selected>Select Item (60+ List)</option>
+    <optgroup label="Groceries (নিত্যপণ্য)">
+        <option>Rice (Chaal)</option><option>Miniket Rice</option><option>Nazirshail Rice</option><option>Lentils (Mushur Daal)</option><option>Moong Daal</option><option>Booter Daal</option><option>Soybean Oil</option><option>Mustard Oil</option><option>Ghee</option><option>Salt (Lobon)</option><option>Sugar (Chini)</option><option>Flour (Ata)</option><option>Maida</option><option>Semolina (Suji)</option>
+    </optgroup>
+    <optgroup label="Spices & Essentials (মশলা)">
+        <option>Onion (Peyaj)</option><option>Garlic (Rosun)</option><option>Ginger (Ada)</option><option>Turmeric Powder</option><option>Chili Powder</option><option>Cumin (Jira)</option><option>Coriander (Dhonia)</option><option>Black Pepper</option><option>Cinnamon (Daruchini)</option><option>Cardamom (Elach)</option><option>Cloves (Long)</option><option>Bay Leaf (Tejpata)</option>
+    </optgroup>
+    <optgroup label="Protein & Dairy (মাছ-মাংস-দুধ)">
+        <option>Beef (Goru)</option><option>Mutton (Khashi)</option><option>Chicken (Broiler)</option><option>Chicken (Sonali)</option><option>Deshi Murgi</option><option>Eggs (Dim)</option><option>Milk (Liquid)</option><option>Milk Powder</option><option>Yogurt (Doi)</option><option>Rui Fish</option><option>Ilish Fish</option><option>Pangas Fish</option><option>Shrimp (Chingri)</option><option>Tilapia Fish</option>
+    </optgroup>
+    <optgroup label="Vegetables & Fruits (শাক-সবজি-ফল)">
+        <option>Potato (Alu)</option><option>Tomato</option><option>Green Chili</option><option>Lemon (Lebu)</option><option>Cucumber (Sosha)</option><option>Brinjal (Begun)</option><option>Cauliflower</option><option>Cabbage</option><option>Banana (Kola)</option><option>Apple</option><option>Orange (Malta)</option><option>Dates (Khejur)</option>
+    </optgroup>
+    <optgroup label="Toiletries (পরিচ্ছন্নতা)">
+        <option>Bath Soap</option><option>Laundry Soap</option><option>Detergent</option><option>Dish Wash</option><option>Shampoo</option><option>Toothpaste</option><option>Toilet Cleaner</option><option>Tissue Paper</option><option>Hand Wash</option>
+    </optgroup>
+    <optgroup label="Bills & Others (বিল ও অন্যান্য)">
+        <option>WiFi Bill</option><option>Electricity Bill</option><option>Gas Bill</option><option>Water Bill</option><option>House Rent</option><option>Bike Fuel</option><option>Car Fuel</option><option>Medicine</option><option>Mobile Recharge</option><option>Tuition Fee</option><option>Service Charge</option>
+    </optgroup>
+</select>
+                        <input type="number" id="new-item-qty" placeholder="Qty" class="p-3 round-box border border-sky-200 outline-none text-black">
+                        <input type="number" id="new-item-price" placeholder="Price" class="p-3 round-box border border-sky-200 outline-none text-black">
+                        <button onclick="addNewItem()" class="bg-sky-600 text-white px-4 py-3 round-box font-bold hover:bg-orange-500 transition">+ ADD ITEM</button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 no-print">
+                    <div class="glass-card p-8 bg-sky-600 text-white text-center round-box shadow-lg">
+                        <p class="text-lg opacity-80">Remaining Balance</p>
+                        <h4 id="balance-display" class="text-4xl font-bold hacker-font">৳ 0.00</h4>
+                    </div>
+                    <div class="glass-card p-8 round-box text-center border-t-4 border-sky-500 bg-white shadow-lg">
+                        <p class="font-bold text-gray-500">Total Expenses</p>
+                        <h4 id="total-expense-display" class="text-3xl font-bold text-orange-600 hacker-font">৳ 0.00</h4>
+                    </div>
+                </div>
+            </div>
+
+<div id="locker-section" class="hidden glass-card p-10 max-w-2xl mx-auto text-center shadow-2xl">
+    <h3 class="text-2xl font-bold text-sky-700 mb-6 hacker-font">🔒 Protocol Note Locker</h3>
+    <div id="lock-screen">
+        <div class="relative w-64 mx-auto mb-6">
+            <input type="password" 
+                   id="lock-pass" 
+                   maxlength="4" 
+                   placeholder="Enter PIN" 
+                   autocomplete="current-password"
+                   class="p-5 w-full round-box border-2 border-sky-300 text-center outline-none bg-white text-sky-600 text-3xl tracking-[10px] font-bold">
+        </div>
+        <button onclick="unlock()" class="bg-sky-600 text-white px-12 py-3 round-box font-bold hover:bg-orange-500 transition shadow-lg">UNLOCK</button>
+    </div>
+
+    <div id="lock-content" class="hidden">
+        <textarea id="private-note" class="w-full h-64 p-6 round-box border-2 border-orange-200 text-black outline-none mb-4" placeholder="Your secret protocol here..."></textarea>
+        <button onclick="lock()" class="bg-orange-500 text-white px-8 py-3 round-box font-bold">SAVE & LOCK</button>
+    </div>
+</div>
+        
+            <div id="reports-section" class="hidden glass-card p-10 shadow-2xl">
+                <div class="flex justify-between items-center mb-10 no-print">
+                    <h3 class="text-2xl font-bold text-sky-700 hacker-font">📊 Analytics & Export</h3>
+                    <div class="flex gap-4">
+                        <button onclick="window.print()" class="bg-sky-500 text-white px-6 py-2 round-box font-bold">PRINT</button>
+                        <button onclick="downloadPDF()" class="bg-orange-500 text-white px-6 py-2 round-box font-bold">PDF</button>
+                       <button onclick="sendToTelegram()" class="bg-blue-500 text-white px-6 py-2 round-box font-bold no-print">📤 SEND TO TELEGRAM</button> 
+                    </div>
+                </div>
+                <div id="print-area" class="p-8 bg-white border text-black">
+                    <h1 class="text-center font-bold text-2xl text-sky-600 border-b pb-4">AHMED FAISAL | PROTOCOL REPORT</h1>
+                    <p class="text-center text-gray-400 my-4" id="report-date-text"></p>
+                    <div id="report-table-container"></div>
+                    <div class="mt-10 flex justify-between font-bold text-xl border-t pt-4"><p>Total:</p><p id="report-total-val" class="text-orange-600"></p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Persistence
+        let totalEarn = localStorage.getItem('v_earn') || 0;
+        let expenses = JSON.parse(localStorage.getItem('v_expenses')) || [];
+        document.getElementById('total-earn').value = totalEarn;
+
+        const greetingText = "WELCOME TO YOUR WORKSHEET FOR GET LIFE EASY...";
+        let ci = 0;
+        function typeWriter() { if (ci < greetingText.length) { document.getElementById("greeting").innerHTML += greetingText.charAt(ci); ci++; setTimeout(typeWriter, 50); } }
+
+        window.onload = () => { typeWriter(); updateTime(); renderItems(); };
+        function updateTime() { const now = new Date(); document.getElementById('live-time').innerText = now.toLocaleString(); document.getElementById('report-date-text').innerText = "Generated: " + now.toLocaleString(); setTimeout(updateTime, 1000); }
+        function navToPage(n) { document.getElementById('page-1').classList.add('hidden'); document.getElementById('page-2').classList.add('hidden'); document.getElementById(`page-${n}`).classList.remove('hidden'); }
+        function showSection(id) { ['bazar-section', 'locker-section', 'reports-section'].forEach(s => document.getElementById(s).classList.add('hidden')); document.getElementById(`${id}-section`).classList.remove('hidden'); }
+        function toggleTheme() { document.getElementById('app-body').classList.toggle('dark-mode'); }
+
+        function updateEarn() { totalEarn = parseFloat(document.getElementById('total-earn').value) || 0; localStorage.setItem('v_earn', totalEarn); renderItems(); }
+
+        function addNewItem() {
+            const name = document.getElementById('new-item-name').value;
+            const qty = parseFloat(document.getElementById('new-item-qty').value) || 0;
+            const price = parseFloat(document.getElementById('new-item-price').value) || 0;
+            if(name === "Select Item (60+ List)" || qty <= 0 || price <= 0) return alert("Fill all fields!");
+            expenses.push({ id: Date.now(), name, qty, price });
+            localStorage.setItem('v_expenses', JSON.stringify(expenses));
+            renderItems();
+            document.getElementById('new-item-qty').value = ''; document.getElementById('new-item-price').value = '';
+        }
+
+        function renderItems() {
+            const list = document.getElementById('item-list');
+            list.innerHTML = '';
+            let total = 0;
+            expenses.forEach(e => {
+                const sub = e.qty * e.price;
+                total += sub;
+                list.innerHTML += `<tr class="border-b border-sky-50"><td class='py-3 font-bold'>${e.name}</td><td>${e.qty}</td><td>৳ ${e.price}</td><td class='font-bold text-sky-600'>৳ ${sub.toFixed(2)}</td><td><button onclick='del(${e.id})' class='text-red-500'>✖</button></td></tr>`;
+            });
+            document.getElementById('total-expense-display').innerText = `৳ ${total.toFixed(2)}`;
+            document.getElementById('report-total-val').innerText = `৳ ${total.toFixed(2)}`;
+            document.getElementById('balance-display').innerText = `৳ ${(totalEarn - total).toFixed(2)}`;
+            updateReportTable();
+        }
+
+        function del(id) { expenses = expenses.filter(e => e.id !== id); localStorage.setItem('v_expenses', JSON.stringify(expenses)); renderItems(); }
+        
+        function unlock() { 
+            if(document.getElementById('lock-pass').value === '0036') { 
+                document.getElementById('lock-screen').classList.add('hidden'); 
+                document.getElementById('lock-content').classList.remove('hidden'); 
+                document.getElementById('private-note').value = localStorage.getItem('v_note') || ''; 
+            } else { alert("ACCESS DENIED!"); } 
+        }
+        
+        function lock() { 
+            localStorage.setItem('v_note', document.getElementById('private-note').value); 
+            document.getElementById('lock-screen').classList.remove('hidden'); 
+            document.getElementById('lock-content').classList.add('hidden'); 
+            document.getElementById('lock-pass').value = ''; 
+        }
+
+        function updateReportTable() {
+            let h = `<table class='w-full border-collapse mt-4'><tr class='bg-sky-50'><th class='p-3 border'>Item</th><th class='p-3 border text-right'>Total</th></tr>`;
+            expenses.forEach(e => { h += `<tr><td class='p-3 border'>${e.name} (${e.qty} units)</td><td class='p-3 border text-right font-bold'>৳ ${e.qty * e.price}</td></tr>`; });
+            h += `</table>`;
+            document.getElementById('report-table-container').innerHTML = h;
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text("PROTOCOL VAULT REPORT", 20, 20);
+            let y = 40;
+            expenses.forEach(e => { doc.text(`${e.name}: ${e.qty * e.price} BDT`, 20, y); y += 10; });
+            doc.save("Report.pdf");
+        }
+
+
+        // --- Telegram Logic ---
+const botToken = "8582534427:AAHq4TfwFqBIy1wU9mp6bDNQGSeSD49yX94";
+const chatId = "682844989";
+
+function sendToTelegram() {
+    let msg = "📊 *VAULT PROTOCOL REPORT*\n";
+    msg += "--------------------------\n";
+    expenses.forEach(e => { 
+        msg += `🔹 ${e.name}: ${e.qty * e.price} TK\n`; 
+    });
+    msg += "--------------------------\n";
+    msg += `💰 *Total Expense:* ${document.getElementById('total-expense-display').innerText} TK\n`;
+    msg += `📉 *Balance:* ${document.getElementById('balance-display').innerText}\n`;
+    msg += `📅 ${new Date().toLocaleString()}`;
+    
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+    
+    fetch(url).then(res => {
+        if(res.ok) alert("🚀 Report Sent to Telegram!");
+        else alert("❌ Error sending report");
+    });
+}
+    </script>
+</body>
+</html>
